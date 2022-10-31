@@ -58,6 +58,19 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Create mongodb container
+
+```bash
+docker run --name token-auth-mongo -d -p 27017:27017 --rm mongo:latest
+```
+
+## Connect to container and start mongosh
+
+```bash
+docker exec -it token-auth-mongo bash
+./bin/mongosh
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).

@@ -33,4 +33,12 @@ export class AuthController {
     const refreshToken = req.user['refreshToken'];
     return this.authService.refreshTokens(userId, refreshToken);
   }
+
+  @UseGuards(AccessTokenGuard)
+  @Get('isAuthenticated')
+  isAuthenticated(@Req() req: Request) {
+    const isAuthenticated = req.isAuthenticated();
+    console.log('isAuthenticated', isAuthenticated);
+    return isAuthenticated;
+  }
 }

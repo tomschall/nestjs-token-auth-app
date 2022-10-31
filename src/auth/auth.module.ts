@@ -5,9 +5,16 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
+import { jwtConstants } from './constants';
 
 @Module({
-  imports: [JwtModule.register({}), UsersModule],
+  imports: [
+    JwtModule.register({
+      privateKey: jwtConstants.privateKey,
+      signOptions: { expiresIn: '3600s', algorithm: 'RS512' },
+    }),
+    UsersModule,
+  ],
   controllers: [AuthController],
   providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
 })

@@ -9,6 +9,7 @@ import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthDto } from './dto/auth.dto';
+import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -79,14 +80,26 @@ export class AuthService {
   }
 
   async getTokens(userId: string, username: string) {
+    const payload = {
+      iat: Date.now() / 1000,
+      'https://hasura.io/jwt/claims': {
+        'x-hasura-allowed-roles': ['admin', 'user'],
+        'x-hasura-default-role': 'admin',
+        'x-hasura-user-id': '1',
+        'x-hasura-org-id': '123',
+        'x-hasura-custom': 'custom-value',
+      },
+    };
+
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
           username,
+          ...payload,
         },
         {
-          secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+          secret: this.configService.get<string>(jwtConstants.privateKey),
           expiresIn: '15m',
         },
       ),
@@ -94,9 +107,10 @@ export class AuthService {
         {
           sub: userId,
           username,
+          ...payload,
         },
         {
-          secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+          secret: this.configService.get<string>(jwtConstants.privateKey),
           expiresIn: '7d',
         },
       ),
