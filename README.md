@@ -71,6 +71,14 @@ docker exec -it token-auth-mongo bash
 ./bin/mongosh
 ```
 
+## Generate RSA512 Keypair (private key in PEM format):
+
+`ssh-keygen -t rsa -b 4096 -E SHA512 -f jwtRS512.key -m PEM`
+
+## Generate RSA512 public key in PEM format:
+
+`openssl rsa -in jwtRS512.key -pubout -out public-key.pem`
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
