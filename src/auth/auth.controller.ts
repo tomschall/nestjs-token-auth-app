@@ -1,5 +1,13 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+  Res,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 import { RefreshTokenGuard } from 'src/common/guards/refreshToken.guard';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -11,13 +19,23 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signup')
-  signup(@Body() createUserDto: CreateUserDto) {
-    return this.authService.signUp(createUserDto);
+  async signup(
+    @Body() createUserDto: CreateUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const tokens = await this.authService.signUp(createUserDto);
+    res.cookie('token', tokens.refreshToken, { httpOnly: true });
+    return tokens.accessToken;
   }
 
   @Post('signin')
-  signin(@Body() data: AuthDto) {
-    return this.authService.signIn(data);
+  async signin(
+    @Body() data: AuthDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const tokens = await this.authService.signIn(data);
+    res.cookie('token', tokens.refreshToken, { httpOnly: true });
+    return tokens.accessToken;
   }
 
   @UseGuards(AccessTokenGuard)
@@ -28,10 +46,16 @@ export class AuthController {
 
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
-  refreshTokens(@Req() req: Request) {
+  async refreshTokens(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    console.log('req.user', req.user);
     const userId = req.user['sub'];
     const refreshToken = req.user['refreshToken'];
-    return this.authService.refreshTokens(userId, refreshToken);
+    const tokens = await this.authService.refreshTokens(userId, refreshToken);
+    res.cookie('token', tokens.refreshToken, { httpOnly: true });
+    return tokens.accessToken;
   }
 
   @UseGuards(AccessTokenGuard)

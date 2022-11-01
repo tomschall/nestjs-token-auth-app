@@ -107,7 +107,6 @@ export class AuthService {
         {
           sub: userId,
           username,
-          ...payload,
         },
         {
           secret: this.configService.get<string>(jwtConstants.privateKey),
