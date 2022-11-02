@@ -85,9 +85,9 @@ export class AuthService {
       'https://hasura.io/jwt/claims': {
         'x-hasura-allowed-roles': ['admin', 'user'],
         'x-hasura-default-role': 'admin',
-        'x-hasura-user-id': '1',
-        'x-hasura-org-id': '123',
-        'x-hasura-custom': 'custom-value',
+        'x-hasura-user-id': String(userId),
+        'x-hasura-org-id': String(userId),
+        'x-hasura-username': username,
       },
     };
 
