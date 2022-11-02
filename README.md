@@ -64,6 +64,10 @@ $ npm run test:cov
 docker run --name token-auth-mongo -d -p 27017:27017 --rm mongo:latest
 ```
 
+## Add .env var that is used in app.module.ts to register MongooseModule import.
+
+Add `MONGO_URI=mongodb://localhost:27017/token-auth-app` to `.env` file.
+
 ## Connect to container and start mongosh
 
 ```bash
